@@ -10,7 +10,9 @@ Requirements:
 
 Future functionality:
 - [ ] OS X support
-- [ ] Add a sample project
+
+Screenshot:
+![Screenshot](https://raw2.github.com/mikepj/GSGradientEditor/master/sample.png)
 
 Sample code:
 ```

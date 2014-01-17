@@ -75,6 +75,31 @@
 	return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+	if (self = [self init]) {
+		self.colors = [aDecoder decodeObjectForKey:@"GSGradient Colors"];
+		self.locations = [aDecoder decodeObjectForKey:@"GSGradient Locations"];
+		
+		// Create the CGGradientRef
+		CGFloat locationFloats[self.locations.count];
+		for (NSUInteger i = 0; i < self.locations.count; i++) {
+			locationFloats[i] = [self.locations[i] floatValue];
+		}
+
+		NSMutableArray *cgColors = [NSMutableArray array];
+		for (UIColor *c in self.colors) {
+			CFArrayAppendValue((CFMutableArrayRef)cgColors, [c CGColor]);
+		}
+		self.cgGradient = CGGradientCreateWithColors(NULL, (CFArrayRef)cgColors, locationFloats);
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+	[aCoder encodeObject:self.colors forKey:@"GSGradient Colors"];
+	[aCoder encodeObject:self.locations forKey:@"GSGradient Locations"];
+}
+
 - (void)dealloc {
 	if (self.cgGradient != NULL) {
 		CGGradientRelease(self.cgGradient);

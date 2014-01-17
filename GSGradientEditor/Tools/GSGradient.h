@@ -36,7 +36,7 @@
  *  NSObject and implement some of the more common NSGradient functionality using
  *  CGGradientRefs. 
  */
-@interface GSGradient : NSObject
+@interface GSGradient : NSObject <NSCoding>
 /// Array of UIColors.
 @property NSArray *colors;
 /// Array of NSNumber locations (0 -> 1).

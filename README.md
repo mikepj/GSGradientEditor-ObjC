@@ -24,4 +24,19 @@ GSGradient *startingGradient = [[GSGradient alloc] initWithStartingColor:[UIColo
 [gradientEditor setGradient:startingGradient];
 [self.view addSubview:gradientEditor];
 
+#pragma mark GSGradientEditorDelegate
+- (void)gradientEditorChanged:(GSGradientEditorView *)view {
+    GSGradient *gradient = [view gradient];
+	// Do something with the gradient.
+}
+
+- (void)gradientEditor:(GSGradientEditorView *)view pegSelectionChanged:(GSColorPeg *)newSelection {
+}
+
+- (void)gradientEditorDidBeginEditing:(GSGradientEditorView *)view {
+}
+
+- (void)gradientEditorDidEndEditing:(GSGradientEditorView *)view {
+}
+
 ```

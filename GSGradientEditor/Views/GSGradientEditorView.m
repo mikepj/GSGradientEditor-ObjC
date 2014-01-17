@@ -145,7 +145,7 @@
 																 metrics:metrics
 																   views:views]];
 
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gp(==gradientPreviewHeight)]-30-[ce(==colorEditorHeight)]"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gp(==gradientPreviewHeight)]-[ce(==colorEditorHeight)]"
 																 options:0
 																 metrics:metrics
 																   views:views]];
@@ -180,6 +180,7 @@
 		}
 	}
 	self.colorPegs = newPegs;
+	if (newPegs.count) [self selectPeg:newPegs[0]];
 }
 
 #pragma mark Custom Setters

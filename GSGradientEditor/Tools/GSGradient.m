@@ -82,6 +82,21 @@
 	}
 }
 
+- (NSString *)description {
+	NSMutableString *colorString = [NSMutableString string];
+	for (NSUInteger i = 0; (i < self.colors.count) && (i < self.locations.count); i++) {
+		CGFloat r, g, b, a;
+		if ([(UIColor *)self.colors[i] getRed:&r green:&g blue:&b alpha:&a]) {
+			[colorString appendFormat:@"  Color: %.3f, %.3f, %.3f, %.3f    Location: %.3f\n", r, g, b, a, [self.locations[i] floatValue]];
+		}
+		else {
+			[colorString appendFormat:@"  Color: %@    Location: %.3f\n", self.colors[i], [self.locations[i] floatValue]];
+		}
+	}
+	
+	return [NSString stringWithFormat:@"GSGradient {\n%@}", colorString];
+}
+
 - (UIColor *)interpolatedColorAtLocation:(CGFloat)location {
 	if (self.colors.count == 0) return nil;
 	if (self.colors.count == 1) return self.colors[0];

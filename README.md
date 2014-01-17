@@ -5,16 +5,16 @@ This module provides a way to create and customize gradients.  There's also a vi
 
 This module breaks MVC conventions a bit to make it more flexible to integrate in your own app.  GSGradientEditorView acts as both the view and the controller, while other classes in the module (GSColorPeg, etc) provide the model layer.  To integrate into your own app, just add a GSGradientEditorView to your heirarchy and set a delegate.
 
-## Requirements:
+#### Requirements:
 - ARC memory management
 
-## Future functionality:
+#### Future functionality:
 - [ ] OS X support
 
-## Screenshot:
+#### Screenshot:
 ![Screenshot](https://raw2.github.com/mikepj/GSGradientEditor/master/sample.png?raw=true)
 
-## Sample code:
+#### Sample code:
 ```
 #include "GSGradientEditor.h"
 

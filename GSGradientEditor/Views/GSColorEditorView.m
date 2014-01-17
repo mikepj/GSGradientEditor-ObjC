@@ -216,12 +216,13 @@
 
 #pragma mark Update the Display
 - (void)updateDisplay {
-	// Reconfigure the color sliders.
+	if (!self.color) return;
+	
+	// Gather the RGBA components from our color.
 	CGFloat redComponent = 0, greenComponent = 0, blueComponent = 0, alphaComponent = 1.;
-	if (self.color) {
-		if (![self.color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alphaComponent]) return;
-	}
-
+	if (![self.color getRed:&redComponent green:&greenComponent blue:&blueComponent alpha:&alphaComponent]) return;
+	
+	// Reconfigure the color sliders.
 	self.redSlider.value = redComponent;
 	self.greenSlider.value = greenComponent;
 	self.blueSlider.value = blueComponent;

@@ -9,8 +9,8 @@ Requirements:
 - ARC memory management
 
 Future functionality:
-[ ] OS X support
-[ ] Add a sample project
+- [ ] OS X support
+- [ ] Add a sample project
 
 Sample code:
 ```

@@ -27,6 +27,7 @@
 //
 
 #import "GSGradient.h"
+#import "GSRGBAColor.h"
 
 @implementation GSGradient
 #ifdef GSGE_IOS
@@ -75,9 +76,21 @@
 	return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	if (self = [self init]) {
-		self.colors = [aDecoder decodeObjectForKey:@"GSGradient Colors"];
+		NSArray *colorArray = [aDecoder decodeObjectForKey:@"GSGradient Colors"];
+		// Convert the array to UIColors if needed.
+		NSMutableArray *convertedArray = [NSMutableArray array];
+		for (id c in colorArray) {
+			if ([c isKindOfClass:[UIColor class]]) {
+				[convertedArray addObject:c];
+			}
+			else if ([c isKindOfClass:[GSRGBAColor class]]) {
+				[convertedArray addObject:[c color]];
+			}
+		}
+		self.colors = convertedArray;
+		
 		self.locations = [aDecoder decodeObjectForKey:@"GSGradient Locations"];
 		
 		// Create the CGGradientRef
@@ -96,7 +109,10 @@
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-	[aCoder encodeObject:self.colors forKey:@"GSGradient Colors"];
+	NSMutableArray *rgbaColors = [NSMutableArray array];
+	for (UIColor *c in self.colors) [rgbaColors addObject:[[GSRGBAColor alloc] initWithColor:c]];
+	
+	[aCoder encodeObject:rgbaColors forKey:@"GSGradient Colors"];
 	[aCoder encodeObject:self.locations forKey:@"GSGradient Locations"];
 }
 

@@ -92,7 +92,7 @@
 }
 
 + (CGSize)suggestedViewSize {
-	return CGSizeMake(320., 20. + 70. + 30. + [GSColorEditorView suggestedViewSize].height + 20.);
+	return CGSizeMake(320., 20. + 70. + 20. + [GSColorEditorView suggestedViewSize].height + 20.);
 }
 
 #pragma mark Setup

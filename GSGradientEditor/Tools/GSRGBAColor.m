@@ -17,6 +17,38 @@
 	return self;
 }
 
+- (instancetype)initWithDictionaryRepresentation:(NSDictionary *)colorDictionary {
+	if (self = [super init]) {
+		if (!colorDictionary) { 
+			self = nil;
+			return nil;
+		}
+		
+		NSNumber *r = [colorDictionary objectForKey:@"GSRGBAColor RedComponent"];
+		NSNumber *g = [colorDictionary objectForKey:@"GSRGBAColor GreenComponent"];
+		NSNumber *b = [colorDictionary objectForKey:@"GSRGBAColor BlueComponent"];
+		NSNumber *a = [colorDictionary objectForKey:@"GSRGBAColor AlphaComponent"];
+		
+		if (!r || !g || !b || !a) {
+			self = nil;
+			return nil;
+		}
+
+		self.redComponent = [r floatValue];
+		self.greenComponent = [g floatValue];
+		self.blueComponent = [b floatValue];
+		self.alphaComponent = [a floatValue];
+	}
+	return self;
+}
+
+- (NSDictionary *)dictionaryRepresentation {
+	return @{ @"GSRGBAColor RedComponent" : @(self.redComponent),
+			  @"GSRGBAColor GreenComponent" : @(self.greenComponent),
+			  @"GSRGBAColor BlueComponent" : @(self.blueComponent),
+			  @"GSRGBAColor AlphaComponent" : @(self.alphaComponent) };
+}
+
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
 	if (self = [self init]) {
 		self.redComponent = [aDecoder decodeFloatForKey:@"GSRGBAColor RedComponent"];

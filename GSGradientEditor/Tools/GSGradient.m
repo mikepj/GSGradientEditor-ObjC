@@ -29,51 +29,110 @@
 #import "GSGradient.h"
 #import "GSRGBAColor.h"
 
+@interface GSGradient ()
+/*! Generates a CGGradientRef object that is equivalent to our stored color parameters.  This can be used to draw the gradient.  CGGradientRef is stored in the cgGradient property.
+ */
+- (void)generateCGGradient;
+@end
+
 @implementation GSGradient
 #ifdef GSGE_IOS
 
 - (instancetype)initWithStartingColor:(UIColor *)color1 endingColor:(UIColor *)color2 {
+	if (!color1 || !color2) {
+		self = nil;
+		return nil;
+	}
 	return [self initWithColors:@[color1, color2]];
 }
 
 - (instancetype)initWithColors:(NSArray *)colorArray {
-	if (colorArray.count == 0) return nil;
+	if (colorArray.count < 2) {
+		self = nil;
+		return nil;
+	}
 	return [self initWithColors:colorArray atLocations:NULL colorSpace:nil];
 }
 
 - (instancetype)initWithColors:(NSArray *)colorArray atLocations:(const CGFloat *)locs colorSpace:(id)colorSpace {
 	// colorSpace ignored
 	if (self = [super init]) {
-		self.colors = colorArray;
-		CGFloat locationFloats[colorArray.count];
+		if (colorArray.count < 2) {
+			self = nil;
+			return nil;
+		}
+		
+		_colors = colorArray;
 		
 		if (locs != NULL) {
 			NSMutableArray *newLocs = [NSMutableArray array];
 			int i;
 			for (i = 0; i < colorArray.count; i++) {
 				[newLocs addObject:@(locs[i])];
-				locationFloats[i] = locs[i];
 			}
-			self.locations = newLocs;
+			_locations = newLocs;
 		}
 		else {
 			NSMutableArray *newLocs = [NSMutableArray array];
 			CGFloat interval = 1. / ((CGFloat)colorArray.count - 1.);
 			for (NSInteger i = 0; i < colorArray.count; i++) {
 				[newLocs addObject:@((CGFloat)i * interval)];
-				locationFloats[i] = (CGFloat)i * interval;
 			}
-			self.locations = newLocs;
+			_locations = newLocs;
 		}
 		
-		NSMutableArray *cgColors = [NSMutableArray array];
-		for (UIColor *c in colorArray) {
-			CFArrayAppendValue((CFMutableArrayRef)cgColors, [c CGColor]);
-		}
-		
-		self.cgGradient = CGGradientCreateWithColors(NULL, (CFArrayRef)cgColors, locationFloats);
+		// Create the CGGradientRef
+		[self generateCGGradient];
 	}
 	return self;
+}
+
+- (instancetype)initWithDictionaryRepresentation:(NSDictionary *)gradientDictionary {
+	if (self = [self init]) {
+		if (!gradientDictionary) {
+			self = nil;
+			return nil;
+		}
+		
+		NSArray *colorArray = [gradientDictionary objectForKey:@"GSGradient Colors"];
+		NSArray *locationArray = [gradientDictionary objectForKey:@"GSGradient Locations"];
+		if (colorArray.count != locationArray.count) {
+			self = nil;
+			return nil;
+		}
+		
+		NSMutableArray *newColors = [NSMutableArray array];
+		for (NSDictionary *colorDictionary in colorArray) {
+			GSRGBAColor *rgbaColor = [[GSRGBAColor alloc] initWithDictionaryRepresentation:colorDictionary];
+			if (rgbaColor) {
+				[newColors addObject:[rgbaColor color]];
+			}
+			else {
+				self = nil;
+				return nil;
+			}
+		}
+		
+		_colors = newColors;
+		_locations = locationArray;
+		
+		// Create the CGGradientRef
+		[self generateCGGradient];
+	}
+	return self;
+}
+
+- (NSDictionary *)dictionaryRepresentation {
+	NSMutableArray *colorDictionaries = [NSMutableArray array];
+	for (UIColor *c in self.colors) [colorDictionaries addObject:[[[GSRGBAColor alloc] initWithColor:c] dictionaryRepresentation]];
+	
+	if (colorDictionaries.count == self.locations.count) {
+		return @{ @"GSGradient Colors" : colorDictionaries,
+				  @"GSGradient Locations" : self.locations };
+	}
+	else {
+		return nil;
+	}
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -82,28 +141,16 @@
 		// Convert the array to UIColors if needed.
 		NSMutableArray *convertedArray = [NSMutableArray array];
 		for (id c in colorArray) {
-			if ([c isKindOfClass:[UIColor class]]) {
-				[convertedArray addObject:c];
-			}
-			else if ([c isKindOfClass:[GSRGBAColor class]]) {
+			if ([c isKindOfClass:[GSRGBAColor class]]) {
 				[convertedArray addObject:[c color]];
 			}
 		}
-		self.colors = convertedArray;
 		
-		self.locations = [aDecoder decodeObjectForKey:@"GSGradient Locations"];
+		_colors = convertedArray;
+		_locations = [aDecoder decodeObjectForKey:@"GSGradient Locations"];
 		
 		// Create the CGGradientRef
-		CGFloat locationFloats[self.locations.count];
-		for (NSUInteger i = 0; i < self.locations.count; i++) {
-			locationFloats[i] = [self.locations[i] floatValue];
-		}
-
-		NSMutableArray *cgColors = [NSMutableArray array];
-		for (UIColor *c in self.colors) {
-			CFArrayAppendValue((CFMutableArrayRef)cgColors, [c CGColor]);
-		}
-		self.cgGradient = CGGradientCreateWithColors(NULL, (CFArrayRef)cgColors, locationFloats);
+		[self generateCGGradient];
 	}
 	return self;
 }
@@ -117,9 +164,9 @@
 }
 
 - (void)dealloc {
-	if (self.cgGradient != NULL) {
-		CGGradientRelease(self.cgGradient);
-		self.cgGradient = NULL;
+	if (_cgGradient) {
+		CGGradientRelease(_cgGradient);
+		_cgGradient = NULL;
 	}
 }
 
@@ -136,6 +183,23 @@
 	}
 	
 	return [NSString stringWithFormat:@"GSGradient {\n%@}", colorString];
+}
+
+- (void)generateCGGradient {
+	if (self.locations.count < 2) return;
+	if (self.colors.count < 2) return;
+	
+	CGFloat locationFloats[self.locations.count];
+	for (NSUInteger i = 0; i < self.locations.count; i++) {
+		locationFloats[i] = [self.locations[i] floatValue];
+	}
+	
+	NSMutableArray *cgColors = [NSMutableArray array];
+	for (UIColor *c in self.colors) {
+		CFArrayAppendValue((CFMutableArrayRef)cgColors, [c CGColor]);
+	}
+	
+	self.cgGradient = CGGradientCreateWithColors(NULL, (CFArrayRef)cgColors, locationFloats);
 }
 
 - (UIColor *)interpolatedColorAtLocation:(CGFloat)location {

@@ -38,11 +38,11 @@
  */
 @interface GSGradient : NSObject <NSCoding>
 /// Array of UIColors.
-@property NSArray *colors;
+@property (readonly) NSArray *colors;
 /// Array of NSNumber locations (0 -> 1).
-@property NSArray *locations;
+@property (readonly) NSArray *locations;
 /// Our CGGradientRef to hold the actual gradient.
-@property (assign) CGGradientRef cgGradient;
+@property CGGradientRef cgGradient;
 
 /*! Create a gradient with a starting and ending color.
  * \param color1 The color at location 0 of the gradient.
@@ -64,6 +64,17 @@
  * \returns A new GSGradient object.
  */
 - (instancetype)initWithColors:(NSArray *)colorArray atLocations:(const CGFloat *)locs colorSpace:(id)colorSpace;
+
+/*! Create a gradient using a dictionary representation (that might have been stored in NSUserDefaults, for example).
+ * \param gradientDictionary An NSDictionary equivalent to the one returned by @selector(dictionaryRepresentation).
+ * \returns A new GSGradient object.
+ */
+- (instancetype)initWithDictionaryRepresentation:(NSDictionary *)gradientDictionary;
+
+/*! Get NSDictionary with parameters needed to specify our gradient object.
+ * \returns An NSDictionary with our gradient data.
+ */
+- (NSDictionary *)dictionaryRepresentation;
 
 /*! Calculate the color at a given location.
  * \param location A value between 0 and 1.

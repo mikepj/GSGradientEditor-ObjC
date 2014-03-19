@@ -40,6 +40,9 @@
 /// The peg being modified with this event.
 @property GSColorPeg *eventPeg;
 
+/// YES if the color editor is in the middle of an event.
+@property BOOL colorEditorEventStarted;
+
 #pragma mark Setup
 - (void)setup;
 - (void)setupGradientPreview;
@@ -171,6 +174,13 @@
 }
 
 - (void)setGradient:(GSGradient *)newGradient {
+	if (self.eventStarted || self.colorEditorEventStarted) {
+		NSLog(@"[GSGradientEditorView setGradient:] The gradient must not change during an edit operation.");
+		return;
+	}
+	
+	NSUInteger originalSelectedPegIndex = self.selectedPeg ? [self.colorPegs indexOfObject:self.selectedPeg] : 0;
+	
 	NSMutableArray *newPegs = [NSMutableArray array];
 	NSArray *gradientColors = newGradient.colors;
 	NSArray *gradientLocations = newGradient.locations;
@@ -180,7 +190,8 @@
 		}
 	}
 	self.colorPegs = newPegs;
-	if (newPegs.count) [self selectPeg:newPegs[0]];
+	
+	if (newPegs.count) [self selectPeg:newPegs[MAX(originalSelectedPegIndex, newPegs.count - 1)]];
 }
 
 #pragma mark Custom Setters
@@ -355,11 +366,13 @@
 }
 
 - (void)colorEditorDidBeginEditing:(GSColorEditorView *)view {
+	self.colorEditorEventStarted = YES;
 	[self.delegate gradientEditorDidBeginEditing:self];
 }
 
 - (void)colorEditorDidEndEditing:(GSColorEditorView *)view {
 	[self.delegate gradientEditorDidEndEditing:self];
+	self.colorEditorEventStarted = NO;
 }
 
 #ifdef GSGE_IOS
@@ -437,7 +450,9 @@
 			}
 		}
 		else {
-			if (![self.colorPegs containsObject:self.eventPeg]) [self addPeg:self.eventPeg];
+			if (![self.colorPegs containsObject:self.eventPeg]) {
+				[self addPeg:self.eventPeg];
+			}
 			[self movePeg:self.eventPeg toLocation:[self ratioForX:newPoint.x]];
 		}
 	}

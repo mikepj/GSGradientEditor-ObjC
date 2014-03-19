@@ -145,7 +145,7 @@
 																 metrics:metrics
 																   views:views]];
 
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gp(==gradientPreviewHeight)]-[ce(==colorEditorHeight)]"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gp(==gradientPreviewHeight)]-25-[ce(==colorEditorHeight)]"
 																 options:0
 																 metrics:metrics
 																   views:views]];

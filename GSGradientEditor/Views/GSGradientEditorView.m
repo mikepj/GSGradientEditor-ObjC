@@ -191,7 +191,7 @@
 	}
 	self.colorPegs = newPegs;
 	
-	if (newPegs.count) [self selectPeg:newPegs[MAX(originalSelectedPegIndex, newPegs.count - 1)]];
+	if (newPegs.count) [self selectPeg:newPegs[MIN(originalSelectedPegIndex, newPegs.count - 1)]];
 }
 
 #pragma mark Custom Setters

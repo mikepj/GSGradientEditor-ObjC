@@ -26,14 +26,25 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#import "GSGradientEditorPlatform.h"
+
+// This view only supports iOS.
+#ifdef GSGE_IOS
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
 
 /*! GSColorPeg keeps track of a color and a location.  These are used as
  *  color points for creating gradients. 
  */
 @interface GSColorPeg : NSObject
 /// The color of our peg.
+#ifdef GSGE_IOS
 @property UIColor *color;
+#else
+@property NSColor *color;
+#endif
 /// A ratio between 0 and 1 of this peg's location on a gradient or color bar.
 @property CGFloat location;
 /// Whether or not the peg is selected (when shown in a gradient editor view).
@@ -44,6 +55,10 @@
  * \param location The location (between 0 and 1) where this peg should fall in the gradient.
  * \returns a new GSColorPeg object with the specified properies.
  */
+#ifdef GSGE_IOS
 + (instancetype)pegWithColor:(UIColor *)color atLocation:(CGFloat)location;
+#else 
++ (instancetype)pegWithColor:(NSColor *)color atLocation:(CGFloat)location;
+#endif
 
 @end

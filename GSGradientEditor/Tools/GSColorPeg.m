@@ -30,7 +30,12 @@
 
 @implementation GSColorPeg
 
-+ (instancetype)pegWithColor:(UIColor *)color atLocation:(CGFloat)location {
+#ifdef GSGE_IOS
++ (instancetype)pegWithColor:(UIColor *)color atLocation:(CGFloat)location
+#else
++ (instancetype)pegWithColor:(NSColor *)color atLocation:(CGFloat)location
+#endif
+{
 	GSColorPeg *p = [[GSColorPeg alloc] init];
 	p.color = color;
 	p.location = location;

@@ -28,6 +28,9 @@
 
 #import "GSGradientEditorPlatform.h"
 
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 #import <UIKit/UIKit.h>
 #import "GSColorEditorView.h"
 #import "GSGradientView.h"
@@ -116,3 +119,5 @@
 - (void)doubleTapClicked;
 
 @end
+
+#endif

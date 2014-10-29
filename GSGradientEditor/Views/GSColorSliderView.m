@@ -28,6 +28,9 @@
 
 #import "GSColorSliderView.h"
 
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 @interface GSColorSliderView ()
 /// The start point of the current event.
 @property CGPoint eventStartPoint;
@@ -160,7 +163,6 @@
 	return sliderR.origin.x + (ratio * (sliderR.size.width - GSColorSliderHeight)) + (0.5 * GSColorSliderHeight);
 }
 
-#ifdef GSGE_IOS
 // These methods capture iOS touch events.  OS X support will come later.
 #pragma mark Events - iOS
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -185,6 +187,7 @@
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
 	[self.delegate colorSliderDidEndEditing:self];
 }
-#endif
 
 @end
+
+#endif

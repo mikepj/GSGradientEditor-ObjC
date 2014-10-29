@@ -28,6 +28,9 @@
 
 #import "GSGradientView.h"
 
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 @interface GSGradientView ()
 /*! Updates the start point and end point of our CAGradientLayer using our current view frame as well as our angle property.
  */
@@ -85,3 +88,5 @@
 }
 
 @end
+
+#endif

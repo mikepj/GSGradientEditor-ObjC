@@ -26,6 +26,10 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#import "GSGradientEditorPlatform.h"
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 #import <UIKit/UIKit.h>
 #import "GSGradient.h"
 
@@ -46,3 +50,5 @@
 - (void)setGradientColors:(NSArray *)colors locations:(NSArray *)locations;
 
 @end
+
+#endif

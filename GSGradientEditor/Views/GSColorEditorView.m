@@ -28,6 +28,9 @@
 
 #import "GSColorEditorView.h"
 
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 @interface GSColorEditorView ()
 - (void)setup;
 - (UILabel *)createLabelWithText:(NSString *)text;
@@ -256,3 +259,5 @@
 
 
 @end
+
+#endif

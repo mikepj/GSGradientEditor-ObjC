@@ -26,6 +26,11 @@
 //  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#import "GSGradientEditorPlatform.h"
+
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 #import <UIKit/UIKit.h>
 #import "GSColorSliderView.h"
 
@@ -68,3 +73,5 @@
 + (CGSize)suggestedViewSize;
 
 @end
+
+#endif

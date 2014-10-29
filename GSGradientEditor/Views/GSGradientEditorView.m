@@ -28,6 +28,9 @@
 
 #import "GSGradientEditorView.h"
 
+// This view only supports iOS.
+#ifdef GSGE_IOS
+
 @interface GSGradientEditorView ()
 /// The start point of the current event.
 @property CGPoint eventStartPoint;
@@ -489,3 +492,5 @@
 }
 
 @end
+
+#endif

@@ -29,6 +29,8 @@
 #import "GSGradient.h"
 #import "GSRGBAColor.h"
 
+#ifdef GSGE_IOS
+
 @interface GSGradient ()
 /*! Generates a CGGradientRef object that is equivalent to our stored color parameters.  This can be used to draw the gradient.  CGGradientRef is stored in the cgGradient property.
  */
@@ -36,7 +38,6 @@
 @end
 
 @implementation GSGradient
-#ifdef GSGE_IOS
 
 - (instancetype)initWithStartingColor:(UIColor *)color1 endingColor:(UIColor *)color2 {
 	if (!color1 || !color2) {
@@ -232,5 +233,11 @@
 						   alpha:(alpha1 * (1 - fraction)) + (alpha2 * fraction)];
 }
 
-#endif
 @end
+
+#else
+
+@implementation GSGradient
+@end
+
+#endif

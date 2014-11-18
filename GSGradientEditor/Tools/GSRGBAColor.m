@@ -24,10 +24,10 @@
 			return nil;
 		}
 		
-		NSNumber *r = [colorDictionary objectForKey:@"GSRGBAColor RedComponent"];
-		NSNumber *g = [colorDictionary objectForKey:@"GSRGBAColor GreenComponent"];
-		NSNumber *b = [colorDictionary objectForKey:@"GSRGBAColor BlueComponent"];
-		NSNumber *a = [colorDictionary objectForKey:@"GSRGBAColor AlphaComponent"];
+		NSNumber *r = colorDictionary[@"GSRGBAColor RedComponent"];
+		NSNumber *g = colorDictionary[@"GSRGBAColor GreenComponent"];
+		NSNumber *b = colorDictionary[@"GSRGBAColor BlueComponent"];
+		NSNumber *a = colorDictionary[@"GSRGBAColor AlphaComponent"];
 		
 		if (!r || !g || !b || !a) {
 			self = nil;

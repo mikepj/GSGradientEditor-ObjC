@@ -12,7 +12,7 @@ This module breaks MVC conventions a bit to make it more flexible to integrate i
 - [ ] OS X support
 
 #### Screenshot:
-![Screenshot](https://raw2.github.com/mikepj/GSGradientEditor/master/sample.png)
+![](https://github.com/mikepj/GSGradientEditor/master/sample.png)
 
 #### User Documentation
 Tap to select each color peg.  Tap and drag to move a color peg.  Double tap in the gradient preview area to evenly distribute the color pegs.  Tap in an empty area to add a new color peg.  Drag a color peg off the gradient preview area to delete it.

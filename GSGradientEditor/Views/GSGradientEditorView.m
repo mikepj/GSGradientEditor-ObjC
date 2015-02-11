@@ -140,9 +140,18 @@
 							 @"ce" : self.colorEditorView };
 	
 	NSDictionary *metrics = @{ @"colorEditorHeight" : @([GSColorEditorView suggestedViewSize].height),
+							   @"gradientPreviewWidth" : @(280),
 							   @"gradientPreviewHeight" : @(70) };
 
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[gp]-|"
+	[self addConstraint:[NSLayoutConstraint constraintWithItem:self.gradientPreview
+													 attribute:NSLayoutAttributeCenterX
+													 relatedBy:NSLayoutRelationEqual
+														toItem:self
+													 attribute:NSLayoutAttributeCenterX
+													multiplier:1.f 
+													  constant:0.f]];
+
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[gp(>=gradientPreviewWidth)]-|"
 																 options:0
 																 metrics:metrics
 																   views:views]];
@@ -151,7 +160,7 @@
 																 metrics:metrics
 																   views:views]];
 
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[gp(==gradientPreviewHeight)]-25-[ce(==colorEditorHeight)]"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[gp(==gradientPreviewHeight)]-25-[ce(==colorEditorHeight)]|"
 																 options:0
 																 metrics:metrics
 																   views:views]];

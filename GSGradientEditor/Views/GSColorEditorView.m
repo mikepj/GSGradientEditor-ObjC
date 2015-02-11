@@ -148,19 +148,19 @@
 	
 	NSDictionary *metrics = @{ @"sliderHeight" : @([GSColorSliderView suggestedViewSize].height) };
 	
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[redLabel]-(-5)-[redS]|"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[redLabel]-[redS]|"
 																 options:NSLayoutFormatAlignAllCenterY
 																 metrics:metrics
 																   views:views]];
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[greenLabel]-(-5)-[greenS]|"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[greenLabel]-[greenS]|"
 																 options:NSLayoutFormatAlignAllCenterY
 																 metrics:metrics
 																   views:views]];
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[blueLabel]-(-5)-[blueS]|"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[blueLabel]-[blueS]|"
 																 options:NSLayoutFormatAlignAllCenterY
 																 metrics:metrics
 																   views:views]];
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[alphaLabel]-(-5)-[alphaS]|"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[alphaLabel]-[alphaS]|"
 																 options:NSLayoutFormatAlignAllCenterY
 																 metrics:metrics
 																   views:views]];

@@ -31,7 +31,8 @@
 // This view only supports iOS.
 #ifdef GSGE_IOS
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+
 #import "GSColorEditorView.h"
 #import "GSGradientView.h"
 #import "GSGradient.h"

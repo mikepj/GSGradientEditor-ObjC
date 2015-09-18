@@ -30,9 +30,9 @@
 
 // This view only supports iOS.
 #ifdef GSGE_IOS
-#import <UIKit/UIKit.h>
+@import UIKit;
 #else
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 #endif
 
 /*! GSColorPeg keeps track of a color and a location.  These are used as

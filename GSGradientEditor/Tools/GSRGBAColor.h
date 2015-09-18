@@ -6,13 +6,16 @@
 //  Copyright (c) 2014 Gaucho Software, LLC. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+@import CoreGraphics;
 
 #import "GSGradientEditorPlatform.h"
 
 #ifdef GSGE_IOS
+@import UIKit;
 #define GSRGBAColor_SystemColorClass UIColor
 #else
+@import Cocoa;
 #define GSRGBAColor_SystemColorClass NSColor
 #endif
 

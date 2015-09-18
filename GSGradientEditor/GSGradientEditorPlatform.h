@@ -35,6 +35,8 @@
 #define GSGE_IOS
 #elif TARGET_IPHONE_SIMULATOR
 #define GSGE_IOS
+#elif TARGET_OS_TV
+#define GSGE_IOS
 #elif TARGET_OS_MAC
 #endif
 

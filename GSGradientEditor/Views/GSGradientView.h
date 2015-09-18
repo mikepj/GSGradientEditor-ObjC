@@ -30,7 +30,8 @@
 // This view only supports iOS.
 #ifdef GSGE_IOS
 
-#import <UIKit/UIKit.h>
+@import UIKit;
+
 #import "GSGradient.h"
 
 /*! A GSGradientView is a custom view built on top of a CAGradientLayer to provide gradient drawing. */

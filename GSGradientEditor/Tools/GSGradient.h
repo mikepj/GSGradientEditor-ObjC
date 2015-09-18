@@ -29,7 +29,7 @@
 #import "GSGradientEditorPlatform.h"
 
 #ifdef GSGE_IOS
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 /*! GSGradient emulates an NSGradient object on OS X.  When run on OS X, we just 
  *  subclass NSGradient and leave the implementation blank.  On iOS, we subclass 
@@ -86,7 +86,7 @@
 
 #else
 
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
 @interface GSGradient : NSGradient
 @end

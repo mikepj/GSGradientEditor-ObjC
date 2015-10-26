@@ -143,7 +143,7 @@
 		NSMutableArray *convertedArray = [NSMutableArray array];
 		for (id c in colorArray) {
 			if ([c isKindOfClass:[GSRGBAColor class]]) {
-				[convertedArray addObject:[c color]];
+				[convertedArray addObject:[(GSRGBAColor *)c color]];
 			}
 		}
 		

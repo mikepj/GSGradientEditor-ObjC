@@ -32,6 +32,9 @@
 #ifdef GSGE_IOS
 
 @interface GSGradient ()
+/// This stores the cached quick interpolated values.  Keys are NSNumbers with integer values, values are UIColor objects.
+@property NSMutableDictionary<NSNumber *,UIColor *> *quickInterpolatedColors;
+
 /*! Generates a CGGradientRef object that is equivalent to our stored color parameters.  This can be used to draw the gradient.  CGGradientRef is stored in the cgGradient property.
  */
 - (void)generateCGGradient;
@@ -82,6 +85,9 @@
 			_locations = newLocs;
 		}
 		
+		_decimalMinValue = [NSDecimalNumber zero];
+		_decimalMaxValue = [NSDecimalNumber one];
+		
 		// Create the CGGradientRef
 		[self generateCGGradient];
 	}
@@ -95,8 +101,8 @@
 			return nil;
 		}
 		
-		NSArray *colorArray = [gradientDictionary objectForKey:@"GSGradient Colors"];
-		NSArray *locationArray = [gradientDictionary objectForKey:@"GSGradient Locations"];
+		NSArray *colorArray = gradientDictionary[@"GSGradient Colors"];
+		NSArray *locationArray = gradientDictionary[@"GSGradient Locations"];
 		if (colorArray.count != locationArray.count) {
 			self = nil;
 			return nil;
@@ -117,6 +123,11 @@
 		_colors = newColors;
 		_locations = locationArray;
 		
+		_decimalMinValue = gradientDictionary[@"GSGradient MinValue"];
+		if (!_decimalMinValue) _decimalMinValue = [NSDecimalNumber zero];
+		_decimalMaxValue = gradientDictionary[@"GSGradient MaxValue"];
+		if (!_decimalMaxValue) _decimalMaxValue = [NSDecimalNumber one];
+		
 		// Create the CGGradientRef
 		[self generateCGGradient];
 	}
@@ -129,7 +140,9 @@
 	
 	if (colorDictionaries.count == self.locations.count) {
 		return @{ @"GSGradient Colors" : colorDictionaries,
-				  @"GSGradient Locations" : self.locations };
+				  @"GSGradient Locations" : self.locations,
+				  @"GSGradient MinValue" : self.decimalMinValue,
+				  @"GSGradient MaxValue" : self.decimalMaxValue };
 	}
 	else {
 		return nil;
@@ -150,6 +163,11 @@
 		_colors = convertedArray;
 		_locations = [aDecoder decodeObjectForKey:@"GSGradient Locations"];
 		
+		_decimalMinValue = [aDecoder decodeObjectForKey:@"GSGradient MinValue"];
+		if (!_decimalMinValue) _decimalMinValue = [NSDecimalNumber zero];
+		_decimalMaxValue = [aDecoder decodeObjectForKey:@"GSGradient MaxValue"];
+		if (!_decimalMaxValue) _decimalMaxValue = [NSDecimalNumber one];
+
 		// Create the CGGradientRef
 		[self generateCGGradient];
 	}
@@ -162,6 +180,8 @@
 	
 	[aCoder encodeObject:rgbaColors forKey:@"GSGradient Colors"];
 	[aCoder encodeObject:self.locations forKey:@"GSGradient Locations"];
+	[aCoder encodeObject:self.decimalMinValue forKey:@"GSGradient MinValue"];
+	[aCoder encodeObject:self.decimalMaxValue forKey:@"GSGradient MaxValue"];
 }
 
 - (void)dealloc {
@@ -169,6 +189,32 @@
 		CGGradientRelease(_cgGradient);
 		_cgGradient = NULL;
 	}
+}
+
+- (void)setDecimalMinValue:(NSDecimalNumber *)decimalMinValue {
+	_decimalMinValue = decimalMinValue;
+	[self.quickInterpolatedColors removeAllObjects];
+}
+
+- (void)setDecimalMaxValue:(NSDecimalNumber *)decimalMaxValue {
+	_decimalMaxValue = decimalMaxValue;
+	[self.quickInterpolatedColors removeAllObjects];
+}
+
+- (void)setMinValue:(CGFloat)minValue {
+	self.decimalMinValue = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%f", minValue] locale:[NSLocale localeWithLocaleIdentifier:@"en_US"]];
+}
+
+- (CGFloat)minValue {
+	return [self.decimalMinValue doubleValue];
+}
+
+- (void)setMaxValue:(CGFloat)maxValue {
+	self.decimalMaxValue = [NSDecimalNumber decimalNumberWithString:[NSString stringWithFormat:@"%f", maxValue] locale:[NSLocale localeWithLocaleIdentifier:@"en_US"]];
+}
+
+- (CGFloat)maxValue {
+	return [self.decimalMaxValue doubleValue];
 }
 
 - (NSString *)description {
@@ -204,10 +250,14 @@
 }
 
 - (UIColor *)interpolatedColorAtLocation:(CGFloat)location {
+	[self checkMinMax];
+	
+	CGFloat scaledLocation = [self scaledLocation:location];
+	
 	if (self.colors.count == 0) return nil;
 	if (self.colors.count == 1) return self.colors[0];
-	if (location < [self.locations[0] floatValue] + 0.0001) return self.colors[0];
-	if (location > [[self.locations lastObject] floatValue] - 0.0001) return [self.colors lastObject];
+	if (scaledLocation < 0.0001) return self.colors[0];
+	if (scaledLocation > 0.9999) return [self.colors lastObject];
 	
 	NSInteger upperIndex = -1;
 	for (NSUInteger i = 0; i < self.locations.count; i++) {
@@ -225,12 +275,53 @@
 	if (![(UIColor *)self.colors[upperIndex - 1] getRed:&red1 green:&green1 blue:&blue1 alpha:&alpha1]) return nil;
 	if (![(UIColor *)self.colors[upperIndex] getRed:&red2 green:&green2 blue:&blue2 alpha:&alpha2]) return nil;
 	
-	CGFloat fraction = (location - [self.locations[upperIndex - 1] floatValue]) / ([self.locations[upperIndex] floatValue] - [self.locations[upperIndex - 1] floatValue]);
+	CGFloat fraction = (scaledLocation - [self.locations[upperIndex - 1] floatValue]) / ([self.locations[upperIndex] floatValue] - [self.locations[upperIndex - 1] floatValue]);
 	
 	return [UIColor colorWithRed:(red1 * (1 - fraction)) + (red2 * fraction)
 						   green:(green1 * (1 - fraction)) + (green2 * fraction)
 							blue:(blue1 * (1 - fraction)) + (blue2 * fraction)
 						   alpha:(alpha1 * (1 - fraction)) + (alpha2 * fraction)];
+}
+
+- (nullable UIColor *)quickInterpolatedColorAtLocation:(CGFloat)location {
+	if (!self.quickInterpolatedColors) {
+		self.quickInterpolatedColors = [NSMutableDictionary dictionary];
+	}
+	
+	[self checkMinMax];
+	
+	CGFloat scaledLocation = [self scaledLocation:location];
+	NSInteger gradation = round(scaledLocation * GSGRADIENT_QUICK_GRADATIONS);
+	if (gradation >= GSGRADIENT_QUICK_GRADATIONS) gradation = GSGRADIENT_QUICK_GRADATIONS - 1;
+	if (gradation < 0) gradation = 0;
+	
+	NSNumber *gradationNumber = [NSNumber numberWithInteger:gradation];
+	
+	UIColor *cachedColor = self.quickInterpolatedColors[gradationNumber];
+	if (cachedColor) {
+		return cachedColor;
+	}
+	else {
+		UIColor *interpolatedColor = [self interpolatedColorAtLocation:self.minValue + ((CGFloat)gradation / GSGRADIENT_QUICK_GRADATIONS * (self.maxValue - self.minValue))];
+		if (interpolatedColor) {
+			self.quickInterpolatedColors[gradationNumber] = interpolatedColor;
+		}
+		return interpolatedColor;
+	}
+}
+
+/// This returns a location that is scaled from a value between (self.minValue, self.maxValue) to a value between (0, 1) to match the color locations set in the gradient.
+- (CGFloat)scaledLocation:(CGFloat)location {
+	return (location - self.minValue) / (self.maxValue - self.minValue);
+}
+
+/// This method checks to make sure self.minValue < self.maxValue before performing a calculation that expects this to be the case.
+- (void)checkMinMax {
+	if (self.maxValue <= self.minValue) {
+		NSLog(@"[GSGradient checkMinMax] Resetting min (%f) and max (%f) values of the gradient:  max must be > min", self.minValue, self.maxValue);
+		self.decimalMinValue = [NSDecimalNumber zero];
+		self.decimalMaxValue = [NSDecimalNumber one];
+	}
 }
 
 @end

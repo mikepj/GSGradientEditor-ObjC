@@ -262,7 +262,7 @@
 	NSInteger upperIndex = -1;
 	for (NSUInteger i = 0; i < self.locations.count; i++) {
 		CGFloat L = [self.locations[i] floatValue];
-		if (location < L) {
+		if (scaledLocation < L) {
 			upperIndex = i;
 			break;
 		}

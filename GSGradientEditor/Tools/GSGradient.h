@@ -28,7 +28,7 @@
 
 #import "GSGradientEditorPlatform.h"
 
-#define GSGRADIENT_QUICK_GRADATIONS (256)
+#define GSGRADIENT_QUICK_GRADATIONS (256.)
 
 #ifdef GSGE_IOS
 @import UIKit;
@@ -48,11 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// Our CGGradientRef to hold the actual gradient.
 @property CGGradientRef cgGradient;
 
-/// If we would like to change the range of the gradient from 0->1 to something else, this property can be used to hold the minimum value.  This range would be used in interpolatedColorAtLocation.
+/// If we would like to change the range of the gradient from 0->1 to something else, this property can be used to hold the minimum value.  This range would be used in interpolatedColorAtLocation and quickInterpolatedColorAtLocation.
 ///
 /// Extended functionality beyond OS X's NSGradient class.
 @property (nonatomic) NSDecimalNumber *decimalMinValue;
-/// If we would like to change the range of the gradient from 0->1 to something else, this property can be used to hold the maximum value.  This range would be used in interpolatedColorAtLocation.
+/// If we would like to change the range of the gradient from 0->1 to something else, this property can be used to hold the maximum value.  This range would be used in interpolatedColorAtLocation and quickInterpolatedColorAtLocation.
 ///
 /// Extended functionality beyond OS X's NSGradient class.
 @property (nonatomic) NSDecimalNumber *decimalMaxValue;

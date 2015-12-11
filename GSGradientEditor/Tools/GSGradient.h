@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  NSObject and implement some of the more common NSGradient functionality using
  *  CGGradientRefs. 
  */
-@interface GSGradient : NSObject <NSCoding>
+@interface GSGradient : NSObject <NSCoding,NSCopying>
 /// Array of UIColors.
 @property (readonly) NSArray *colors;
 /// Array of NSNumber locations (0 -> 1).

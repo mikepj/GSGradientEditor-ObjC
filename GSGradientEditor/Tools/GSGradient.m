@@ -184,6 +184,16 @@
 	[aCoder encodeObject:self.decimalMaxValue forKey:@"GSGradient MaxValue"];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+	NSDictionary *gradientD = [self dictionaryRepresentation];
+	if (gradientD) {
+		return [[GSGradient alloc] initWithDictionaryRepresentation:gradientD];
+	}
+	else {
+		return nil;
+	}
+}
+
 - (void)dealloc {
 	if (_cgGradient) {
 		CGGradientRelease(_cgGradient);

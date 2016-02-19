@@ -10,7 +10,7 @@
 
 @implementation GSRGBAColor
 
-- (instancetype)initWithColor:(GSRGBAColor_SystemColorClass *)color {
+- (instancetype)initWithColor:(GSGradient_SystemColorClass *)color {
 	if (self = [super init]) {
 		[self setColor:color];
 	}
@@ -66,7 +66,7 @@
 	[aCoder encodeFloat:self.alphaComponent forKey:@"GSRGBAColor AlphaComponent"];
 }
 
-- (void)setColor:(GSRGBAColor_SystemColorClass *)color {
+- (void)setColor:(GSGradient_SystemColorClass *)color {
 #ifdef GSGE_IOS
 	[color getRed:&_redComponent green:&_greenComponent blue:&_blueComponent alpha:&_alphaComponent];
 #else
@@ -80,7 +80,7 @@
 #endif
 }
 
-- (GSRGBAColor_SystemColorClass *)color {
+- (GSGradient_SystemColorClass *)color {
 #ifdef GSGE_IOS
 	return [UIColor colorWithRed:_redComponent green:_greenComponent blue:_blueComponent alpha:_alphaComponent];
 #else

@@ -29,11 +29,9 @@
 #import "GSGradient.h"
 #import "GSRGBAColor.h"
 
-#ifdef GSGE_IOS
-
 @interface GSGradient ()
 /// This stores the cached quick interpolated values.  Keys are NSNumbers with integer values, values are UIColor objects.
-@property NSMutableDictionary<NSNumber *,UIColor *> *quickInterpolatedColors;
+@property NSMutableDictionary<NSNumber *,GSGradient_SystemColorClass *> *quickInterpolatedColors;
 
 /*! Generates a CGGradientRef object that is equivalent to our stored color parameters.  This can be used to draw the gradient.  CGGradientRef is stored in the cgGradient property.
  */
@@ -42,7 +40,8 @@
 
 @implementation GSGradient
 
-- (instancetype)initWithStartingColor:(UIColor *)color1 endingColor:(UIColor *)color2 {
+#ifdef GSGE_IOS
+- (instancetype)initWithStartingColor:(GSGradient_SystemColorClass *)color1 endingColor:(GSGradient_SystemColorClass *)color2 {
 	if (!color1 || !color2) {
 		self = nil;
 		return nil;
@@ -93,6 +92,7 @@
 	}
 	return self;
 }
+#endif
 
 - (instancetype)initWithDictionaryRepresentation:(NSDictionary *)gradientDictionary {
 	if (self = [self init]) {
@@ -136,7 +136,7 @@
 
 - (NSDictionary *)dictionaryRepresentation {
 	NSMutableArray *colorDictionaries = [NSMutableArray array];
-	for (UIColor *c in self.colors) [colorDictionaries addObject:[[[GSRGBAColor alloc] initWithColor:c] dictionaryRepresentation]];
+	for (GSGradient_SystemColorClass *c in self.colors) [colorDictionaries addObject:[[[GSRGBAColor alloc] initWithColor:c] dictionaryRepresentation]];
 	
 	if (colorDictionaries.count == self.locations.count) {
 		return @{ @"GSGradient Colors" : colorDictionaries,
@@ -176,7 +176,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
 	NSMutableArray *rgbaColors = [NSMutableArray array];
-	for (UIColor *c in self.colors) [rgbaColors addObject:[[GSRGBAColor alloc] initWithColor:c]];
+	for (GSGradient_SystemColorClass *c in self.colors) [rgbaColors addObject:[[GSRGBAColor alloc] initWithColor:c]];
 	
 	[aCoder encodeObject:rgbaColors forKey:@"GSGradient Colors"];
 	[aCoder encodeObject:self.locations forKey:@"GSGradient Locations"];
@@ -230,6 +230,7 @@
 - (NSString *)description {
 	NSMutableString *colorString = [NSMutableString string];
 	for (NSUInteger i = 0; (i < self.colors.count) && (i < self.locations.count); i++) {
+#ifdef GSGE_IOS
 		CGFloat r, g, b, a;
 		if ([(UIColor *)self.colors[i] getRed:&r green:&g blue:&b alpha:&a]) {
 			[colorString appendFormat:@"  Color: %.3f, %.3f, %.3f, %.3f    Location: %.3f\n", r, g, b, a, [self.locations[i] floatValue]];
@@ -237,6 +238,9 @@
 		else {
 			[colorString appendFormat:@"  Color: %@    Location: %.3f\n", self.colors[i], [self.locations[i] floatValue]];
 		}
+#else
+		[colorString appendFormat:@"  Color: %@    Location: %.3f\n", self.colors[i], [self.locations[i] floatValue]];
+#endif
 	}
 	
 	return [NSString stringWithFormat:@"GSGradient {\n%@}", colorString];
@@ -252,19 +256,20 @@
 	}
 	
 	NSMutableArray *cgColors = [NSMutableArray array];
-	for (UIColor *c in self.colors) {
+	for (GSGradient_SystemColorClass *c in self.colors) {
 		CFArrayAppendValue((CFMutableArrayRef)cgColors, [c CGColor]);
 	}
 	
 	self.cgGradient = CGGradientCreateWithColors(NULL, (CFArrayRef)cgColors, locationFloats);
 }
 
-- (UIColor *)interpolatedColorAtLocation:(CGFloat)location {
+#ifdef GSGE_IOS
+- (GSGradient_SystemColorClass *)interpolatedColorAtLocation:(CGFloat)location {
 	[self checkMinMax];
 	
 	CGFloat scaledLocation = [self scaledLocation:location];
 	
-	if (self.colors.count == 0) return nil;
+	if (self.colors.count == 0) return [GSGradient_SystemColorClass clearColor];
 	if (self.colors.count == 1) return self.colors[0];
 	if (scaledLocation < 0.0001) return self.colors[0];
 	if (scaledLocation > 0.9999) return [self.colors lastObject];
@@ -292,8 +297,16 @@
 							blue:(blue1 * (1 - fraction)) + (blue2 * fraction)
 						   alpha:(alpha1 * (1 - fraction)) + (alpha2 * fraction)];
 }
+#else 
+- (GSGradient_SystemColorClass *)interpolatedColorAtLocation:(CGFloat)location {
+	[self checkMinMax];
+	
+	CGFloat scaledLocation = [self scaledLocation:location];
+	return [super interpolatedColorAtLocation:scaledLocation];
+}
+#endif
 
-- (nullable UIColor *)quickInterpolatedColorAtLocation:(CGFloat)location {
+- (nullable GSGradient_SystemColorClass *)quickInterpolatedColorAtLocation:(CGFloat)location {
 	if (!self.quickInterpolatedColors) {
 		self.quickInterpolatedColors = [NSMutableDictionary dictionary];
 	}
@@ -307,12 +320,12 @@
 	
 	NSNumber *gradationNumber = [NSNumber numberWithInteger:gradation];
 	
-	UIColor *cachedColor = self.quickInterpolatedColors[gradationNumber];
+	GSGradient_SystemColorClass *cachedColor = self.quickInterpolatedColors[gradationNumber];
 	if (cachedColor) {
 		return cachedColor;
 	}
 	else {
-		UIColor *interpolatedColor = [self interpolatedColorAtLocation:self.minValue + ((CGFloat)gradation / GSGRADIENT_QUICK_GRADATIONS * (self.maxValue - self.minValue))];
+		GSGradient_SystemColorClass *interpolatedColor = [self interpolatedColorAtLocation:self.minValue + ((CGFloat)gradation / GSGRADIENT_QUICK_GRADATIONS * (self.maxValue - self.minValue))];
 		if (interpolatedColor) {
 			self.quickInterpolatedColors[gradationNumber] = interpolatedColor;
 		}
@@ -335,10 +348,3 @@
 }
 
 @end
-
-#else
-
-@implementation GSGradient
-@end
-
-#endif

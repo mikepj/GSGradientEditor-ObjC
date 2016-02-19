@@ -13,10 +13,8 @@
 
 #ifdef GSGE_IOS
 @import UIKit;
-#define GSRGBAColor_SystemColorClass UIColor
 #else
 @import Cocoa;
-#define GSRGBAColor_SystemColorClass NSColor
 #endif
 
 /*! This class just has RGBA color components.  We use this class so we can archive GSGradients while supporting multiple platforms.  If we just archived a UIColor array in GSGradient, we wouldn't be able to reload the GSGradient on OS X. */
@@ -34,7 +32,7 @@
  * \param color A UIColor on iOS or an NSColor on OS X.
  * \returns A new GSRGBAColor.
  */
-- (instancetype)initWithColor:(GSRGBAColor_SystemColorClass *)color;
+- (instancetype)initWithColor:(GSGradient_SystemColorClass *)color;
 
 /*! Initialize a GSRGBAColor object using the passed in color NSDictionary.  This could be used to save a color to NSUserDefaults.
  * \param colorDictionary An NSDictionary matching the format returned by @selector(dictionaryRepresentation).
@@ -50,11 +48,11 @@
 /*! Set the color using a color object of the type used by the local system.
  * \param color A UIColor on iOS or an NSColor on OS X.
  */
-- (void)setColor:(GSRGBAColor_SystemColorClass *)color;
+- (void)setColor:(GSGradient_SystemColorClass *)color;
 
 /*! Get an equivalent color object of the type used by the local system.
  * \returns A UIColor on iOS or an NSColor on OS X.
  */
-- (GSRGBAColor_SystemColorClass *)color;
+- (GSGradient_SystemColorClass *)color;
 
 @end

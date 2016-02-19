@@ -33,11 +33,15 @@
 #include "TargetConditionals.h"
 #if TARGET_OS_IPHONE
 #define GSGE_IOS
+#define GSGradient_SystemColorClass UIColor
 #elif TARGET_IPHONE_SIMULATOR
 #define GSGE_IOS
+#define GSGradient_SystemColorClass UIColor
 #elif TARGET_OS_TV
 #define GSGE_IOS
+#define GSGradient_SystemColorClass UIColor
 #elif TARGET_OS_MAC
+#define GSGradient_SystemColorClass NSColor
 #endif
 
 #endif

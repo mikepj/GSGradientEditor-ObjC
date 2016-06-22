@@ -40,24 +40,40 @@
 
 @implementation GSGradient
 
-#ifdef GSGE_IOS
 - (instancetype)initWithStartingColor:(GSGradient_SystemColorClass *)color1 endingColor:(GSGradient_SystemColorClass *)color2 {
+#ifdef GSGE_IOS
 	if (!color1 || !color2) {
 		self = nil;
 		return nil;
 	}
 	return [self initWithColors:@[color1, color2]];
+#else
+	if (self = [super initWithStartingColor:color1 endingColor:color2]) {
+		_decimalMinValue = [NSDecimalNumber zero];
+		_decimalMaxValue = [NSDecimalNumber one];
+	}
+	return self;
+#endif
 }
 
 - (instancetype)initWithColors:(NSArray *)colorArray {
+#ifdef GSGE_IOS
 	if (colorArray.count < 2) {
 		self = nil;
 		return nil;
 	}
 	return [self initWithColors:colorArray atLocations:NULL colorSpace:nil];
+#else
+	if (self = [super initWithColors:colorArray]) {
+		_decimalMinValue = [NSDecimalNumber zero];
+		_decimalMaxValue = [NSDecimalNumber one];
+	}
+	return self;
+#endif
 }
 
 - (instancetype)initWithColors:(NSArray *)colorArray atLocations:(const CGFloat *)locs colorSpace:(id)colorSpace {
+#ifdef GSGE_IOS
 	// colorSpace ignored
 	if (self = [super init]) {
 		if (colorArray.count < 2) {
@@ -91,8 +107,34 @@
 		[self generateCGGradient];
 	}
 	return self;
-}
+#else
+	// Use the device RGB color space if colorSpace is nil.
+	if (self = [super initWithColors:colorArray atLocations:locs colorSpace:colorSpace ? colorSpace : [NSColorSpace deviceRGBColorSpace]]) {
+		_colors = colorArray;
+		
+		if (locs != NULL) {
+			NSMutableArray *newLocs = [NSMutableArray array];
+			int i;
+			for (i = 0; i < colorArray.count; i++) {
+				[newLocs addObject:@(locs[i])];
+			}
+			_locations = newLocs;
+		}
+		else {
+			NSMutableArray *newLocs = [NSMutableArray array];
+			CGFloat interval = 1. / ((CGFloat)colorArray.count - 1.);
+			for (NSInteger i = 0; i < colorArray.count; i++) {
+				[newLocs addObject:@((CGFloat)i * interval)];
+			}
+			_locations = newLocs;
+		}
+
+		_decimalMinValue = [NSDecimalNumber zero];
+		_decimalMaxValue = [NSDecimalNumber one];
+	}
+	return self;
 #endif
+}
 
 - (instancetype)initWithDictionaryRepresentation:(NSDictionary *)gradientDictionary {
 	if (self = [self init]) {

@@ -239,7 +239,6 @@
 - (void)dealloc {
 	if (_cgGradient) {
 		CGGradientRelease(_cgGradient);
-		_cgGradient = NULL;
 	}
 }
 

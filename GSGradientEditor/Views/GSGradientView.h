@@ -42,13 +42,13 @@
 /*! Forwards the colors and locations on to our CAGradientLayer.
  * \param gradient A GSGradient object to gather color data from.
  */
-- (void)setGradient:(GSGradient *)gradient;
+- (void)setGradient:(nullable GSGradient *)gradient;
 
 /*! Forwards the colors and locations on to our CAGradientLayer.  Array sizes must match.
  * \param colors An array of UIColors.
  * \param locations An array of NSNumbers between 0 and 1.
  */
-- (void)setGradientColors:(NSArray *)colors locations:(NSArray *)locations;
+- (void)setGradientColors:(nullable NSArray *)colors locations:(nullable NSArray *)locations;
 
 @end
 

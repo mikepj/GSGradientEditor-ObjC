@@ -50,9 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 /// Array of UIColors.
-@property (readonly) NSArray *colors;
+@property (readonly) NSArray<GSGradient_SystemColorClass *> *colors;
 /// Array of NSNumber locations (0 -> 1).
-@property (readonly) NSArray *locations;
+@property (readonly) NSArray<NSNumber *> *locations;
 /// Our CGGradientRef to hold the actual gradient.
 @property CGGradientRef cgGradient;
 
@@ -87,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
  * \param colorArray An array of UIColors.
  * \returns A new GSGradient object.
  */
-- (nullable instancetype)initWithColors:(NSArray *)colorArray;
+- (nullable instancetype)initWithColors:(NSArray<GSGradient_SystemColorClass *> *)colorArray;
 
 /*! Create a gradient with the given colors and locations.  The colorSpace parameter is retained for compatibility with NSGradient on OS X, but is ignored.  The size of the location array must be the same as the size of the color array.
  * \param colorArray An array of colors.
@@ -113,7 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
  * \param location A value between 0 and 1.
  * \returns The color matching the gradient at the given location.
  */
-- (GSGradient_SystemColorClass *)interpolatedColorAtLocation:(CGFloat)location;
+- (nullable GSGradient_SystemColorClass *)interpolatedColorAtLocation:(CGFloat)location;
 
 /*! This method will cache interpolated colors using GSGRADIENT_QUICK_GRADATIONS (256).  Interpolated colors will only be calculated once and after that the cached value will be returned. */
 - (nullable GSGradient_SystemColorClass *)quickInterpolatedColorAtLocation:(CGFloat)location;

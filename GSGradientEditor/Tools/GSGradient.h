@@ -59,11 +59,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// If we would like to change the range of the gradient from 0->1 to something else, this property can be used to hold the minimum value.  This range would be used in interpolatedColorAtLocation and quickInterpolatedColorAtLocation.
 ///
 /// Extended functionality beyond OS X's NSGradient class.
-@property (nonatomic) NSDecimalNumber *decimalMinValue;
+@property (strong,nonatomic) NSDecimalNumber *decimalMinValue;
 /// If we would like to change the range of the gradient from 0->1 to something else, this property can be used to hold the maximum value.  This range would be used in interpolatedColorAtLocation and quickInterpolatedColorAtLocation.
 ///
 /// Extended functionality beyond OS X's NSGradient class.
-@property (nonatomic) NSDecimalNumber *decimalMaxValue;
+@property (strong,nonatomic) NSDecimalNumber *decimalMaxValue;
 
 /// This is a CGFloat shortcut to set a decimalMinValue.
 ///

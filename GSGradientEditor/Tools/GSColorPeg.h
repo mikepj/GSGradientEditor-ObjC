@@ -41,9 +41,9 @@
 @interface GSColorPeg : NSObject
 /// The color of our peg.
 #ifdef GSGE_IOS
-@property UIColor *color;
+@property (strong) UIColor *color;
 #else
-@property NSColor *color;
+@property (strong) NSColor *color;
 #endif
 /// A ratio between 0 and 1 of this peg's location on a gradient or color bar.
 @property CGFloat location;

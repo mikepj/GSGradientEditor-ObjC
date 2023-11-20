@@ -75,13 +75,13 @@
  */
 @interface GSGradientEditorView : UIView <GSColorEditorViewDelegate>
 /// This view shows a preview of current gradient.
-@property GSGradientView *gradientPreview;
+@property (strong) GSGradientView *gradientPreview;
 /// This view allows a color in the gradient to be modified.
-@property GSColorEditorView *colorEditorView;
+@property (strong) GSColorEditorView *colorEditorView;
 /// This is an array of GSColorPegView objects.
-@property NSArray *colorPegViews;
+@property (strong) NSArray *colorPegViews;
 /// This is an array of GSColorPeg objects.  There must always be at least 2 pegs to have a gradient.
-@property (nonatomic) NSArray *colorPegs;
+@property (strong,nonatomic) NSArray *colorPegs;
 /// This delegate gets notified when the gradient is changed, or a new peg is selected.
 @property (weak) id<GSGradientEditorDelegate> delegate;
 

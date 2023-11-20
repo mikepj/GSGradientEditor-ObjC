@@ -61,9 +61,9 @@
  */
 @interface GSColorSliderView : UIView
 /// The slider is a gradient view to show how the color changed if the slider moves to a given location.
-@property GSGradientView *slider;
+@property (strong) GSGradientView *slider;
 /// The peg view.
-@property UIView *peg;
+@property (strong) UIView *peg;
 /// Determines the location of the peg.  Should be between 0 and 1.
 @property (nonatomic) CGFloat value;
 /// Our delegate.

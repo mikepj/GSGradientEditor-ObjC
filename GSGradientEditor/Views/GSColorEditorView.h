@@ -57,13 +57,13 @@
  */
 @interface GSColorEditorView : UIView <GSColorSliderViewDelegate>
 /// The color shown.
-@property (nonatomic) UIColor *color;
+@property (strong,nonatomic) UIColor *color;
 /// Labels for our color sliders.
-@property UILabel *redLabel, *greenLabel, *blueLabel, *alphaLabel;
+@property (strong) UILabel *redLabel, *greenLabel, *blueLabel, *alphaLabel;
 /// The color sliders themselves.
-@property GSColorSliderView *redSlider, *greenSlider, *blueSlider, *alphaSlider;
+@property (strong) GSColorSliderView *redSlider, *greenSlider, *blueSlider, *alphaSlider;
 /// Transparent spacing views to insert between the sliders, so AutoLayout can work correctly.
-@property UIView *redGreenSpacer, *greenBlueSpacer, *blueAlphaSpacer;
+@property (strong) UIView *redGreenSpacer, *greenBlueSpacer, *blueAlphaSpacer;
 /// Our delegate.
 @property (weak) id<GSColorEditorViewDelegate> delegate;
 

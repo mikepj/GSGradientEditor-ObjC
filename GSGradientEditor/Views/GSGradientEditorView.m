@@ -102,6 +102,10 @@
 	return CGSizeMake(320., 20. + 70. + 20. + [GSColorEditorView suggestedViewSize].height + 20.);
 }
 
+- (CGSize)intrinsicContentSize {
+    return [GSGradientEditorView suggestedViewSize];
+}
+
 #pragma mark Setup
 - (void)setup {
 	self.colorPegs = @[[GSColorPeg pegWithColor:[UIColor colorWithRed:1. green:1. blue:1. alpha:1.] atLocation:0],
@@ -161,7 +165,7 @@
 																 metrics:metrics
 																   views:views]];
 
-	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[gp(==gradientPreviewHeight)]-25-[ce(==colorEditorHeight)]|"
+	[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[gp(==gradientPreviewHeight)]-25-[ce(==colorEditorHeight)]-(>=8)-|"
 																 options:0
 																 metrics:metrics
 																   views:views]];

@@ -50,12 +50,6 @@
 	self.gradientEditor.delegate = self;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark GSGradientEditorDelegate
 - (void)gradientEditorChanged:(GSGradientEditorView *)view {
     GSGradient *gradient = [view gradient];
